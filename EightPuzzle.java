@@ -4,23 +4,31 @@ import java.io.FileReader;
 import java.util.*;
 import javax.naming.LimitExceededException;
 
+//  Eight Puzzle Class in order to solve the eight puzzle //
+
 public class EightPuzzle {
 
+    // Desired state
     private static final int[][] goalState = { { 0, 1, 2 }, { 3, 4, 5 }, { 6, 7, 8 } };
-    // ArrayList to store all of the information which alternates, before it goes to
+    // Node variable to store the start node
     private static Node startNode;
-    // private EightPuzzle parentState;
+    // int variable to store the total node num to search
     private static int nodeNum;
+    // int variable to store the number of nodes
     private static int numOfNode;
 
     /**
-     * @param initialState
+     * Initializes the eight puzzle class
      */
     public EightPuzzle() {
         startNode = new Node(goalState, 0, 0, null);
         nodeNum = 500;
     }
 
+    /**
+     * @param filepath the file path to test the search methods
+     * @throws Exception
+     */
     public void commandReading(String filepath) throws Exception {
         BufferedReader br = new BufferedReader(new FileReader(new File(filepath)));
 
@@ -59,32 +67,36 @@ public class EightPuzzle {
 
     }
 
+    /** getter method for start node */
     public static Node getStartNode() {
         return startNode;
     }
 
+    /** getter method for node num */
     public static int getNodeLimit() {
         return nodeNum;
     }
 
+    /** setter method for node num */
     public static void setNodeNum(int inputNode) {
         numOfNode = inputNode;
     }
 
+    /** getter method for numOfNode */
     public static int getNodeNum() {
         return numOfNode;
     }
 
     /**
-     * inputState = input which the method receives to set the state of the puzzle
-     * as
+     * @param inputNode inputs a node in order to update the current state
+     *                  update the current state to input node
      */
     public static void setState(int[][] inputNode) {
         startNode.currentState = inputNode;
     }
 
     /**
-     * No input is taken, and prints out the state
+     * prints out the current state
      */
     public static void printState() {
         StringBuilder printingState = new StringBuilder();
@@ -98,7 +110,7 @@ public class EightPuzzle {
     }
 
     /**
-     * Calculating Heuristic for h1, which is number of misplaced tiles
+     * calulating heuristic one which is number of misplaced tiles
      */
     private static int calculateHeuristic(int[][] inputState) {
         int num_misplaced = 0;
@@ -122,7 +134,7 @@ public class EightPuzzle {
     }
 
     /**
-     * Calculating the heuristic for h2, which is how far each tile is to the goal
+     * calculating heuristic 2 which is how far each tile is to the goal
      */
     private static int calculateH2Heuristic(int[][] inputState) {
         int heuristicsValue = 0;
@@ -137,6 +149,10 @@ public class EightPuzzle {
         return heuristicsValue;
     }
 
+    /**
+     * @param value inputs a value in order to test if it is in the right location
+     *              compares value input with the goal state value
+     */
     private static int[] correctLocation(int value) {
         int[] temp = new int[2];
         for (int i = 0; i < 3; i++) {
@@ -151,7 +167,10 @@ public class EightPuzzle {
     }
 
     /**
-     * @param inputState
+     * @param inputState input state to calculate the heuristics using heuristic
+     *                   function
+     *                   calculates the heuristic function for local beam search of
+     *                   the input state
      */
     private static int calculateBeamEval(int[][] inputState) {
         return calculateHeuristic(inputState) + calculateH2Heuristic(inputState);
@@ -206,6 +225,9 @@ public class EightPuzzle {
         return newState;
     }
 
+    /**
+     * randomizes a state in order to test
+     */
     public static int[][] randomizeState(int n) {
         Random rand = new Random();
         for (int i = 0; i < n; i++) {
@@ -219,6 +241,12 @@ public class EightPuzzle {
         return getStartNode().getCurrentState();
     }
 
+    /**
+     * @throws LimitExceededException limit exceeded exception if the number of
+     *                                searched nodes exceeds nodeNum
+     *                                implementation of A star search of heuristic
+     *                                function of h1
+     */
     public static void searchAStar() throws LimitExceededException {
         int count = 0;
         PriorityQueue<Node> openState = new PriorityQueue<>(
@@ -255,6 +283,12 @@ public class EightPuzzle {
                 "Maximum Nodes searched.");
     }
 
+    /**
+     * @throws LimitExceededException limit exceeded exception if the number of
+     *                                searched nodes exceeds nodeNum
+     *                                implementation of A start search using
+     *                                heuristic function of h2
+     */
     public static void searchH2AStar() throws LimitExceededException {
         int count = 0;
         PriorityQueue<Node> openState = new PriorityQueue<>(
@@ -292,6 +326,12 @@ public class EightPuzzle {
 
     }
 
+    /**
+     * @param k the number of best states to select
+     * @throws LimitExceededException throws limit exceeded exception if the number
+     *                                of searched nodes exceeds nodeNum
+     *                                implementation of local beam search
+     */
     public static void localBeamSearch(int k) throws LimitExceededException {
         int heuristicValue = calculateBeamEval(getStartNode().getCurrentState());
         getStartNode().setHeuristic(heuristicValue);
@@ -336,6 +376,12 @@ public class EightPuzzle {
 
     }
 
+    /**
+     * @param inputNode inputs a node to test the moves
+     * @return returns list containing nodes of four possible states which
+     *         reflects on four possible moves based on the input node for local
+     *         beam search
+     */
     private static List<Node> generateBeamSuccessors(Node inputNode) {
         List<Node> successorNodes = new ArrayList<>();
         int blankRow = -1;
@@ -373,6 +419,12 @@ public class EightPuzzle {
         return successorNodes;
     }
 
+    /**
+     * @param inputNode inputs a node to test the moves
+     * @return returns list containing nodes of four possible states which
+     *         reflects on four possible moves based on the input node for A star
+     *         search with heuristic of h2
+     */
     private static List<Node> generateH2Successors(Node inputNode) {
         List<Node> successorNodes = new ArrayList<>();
         int blankRow = -1;
@@ -385,9 +437,7 @@ public class EightPuzzle {
                 }
             }
         }
-        // array which is used to move blank tile up or down
         int[] rowVal = { -1, 1, 0, 0 };
-        // array which is used to move blank tile left or right
         int[] colVal = { 0, 0, -1, 1 };
 
         for (int i = 0; i < 4; i++) {
@@ -404,6 +454,12 @@ public class EightPuzzle {
         return successorNodes;
     }
 
+    /**
+     * @param inputNode inputs a node to test the moves
+     * @return returns list containing nodes of four possible states which
+     *         reflects on four possible moves based on the input node for A star
+     *         search with heuristic of h1
+     */
     private static List<Node> generateSuccessors(Node inputNode) {
         List<Node> successorNodes = new ArrayList<>();
         int blankRow = -1;
@@ -416,9 +472,7 @@ public class EightPuzzle {
                 }
             }
         }
-        // array which is used to move blank tile up or down
         int[] rowVal = { -1, 1, 0, 0 };
-        // array which is used to move blank tile left or right
         int[] colVal = { 0, 0, -1, 1 };
 
         for (int i = 0; i < 4; i++) {
@@ -435,6 +489,9 @@ public class EightPuzzle {
         return successorNodes;
     }
 
+    /**
+     * makes a copy of the current state
+     */
     private static int[][] copyState(int[][] inputToCopy) {
         int[][] tempNode = new int[3][3];
         for (int i = 0; i < 3; i++) {
@@ -443,6 +500,10 @@ public class EightPuzzle {
         return tempNode;
     }
 
+    /**
+     * @param inputNode input node to see which move it made
+     * @return returns string value of which move the inputNode has made
+     */
     private static String getMove(Node inputNode) {
         if (inputNode.parent == null)
             return "Starting State";
@@ -486,6 +547,10 @@ public class EightPuzzle {
         nodeNum = nodeLimit;
     }
 
+    /**
+     * @param inputNode input node used to print out the path that it took
+     *                  prints out the path which the input node has took
+     */
     public static void printPathSolution(Node inputNode) {
         Stack<Node> pathPrint = new Stack<>();
         while (inputNode != null) {
@@ -507,12 +572,23 @@ public class EightPuzzle {
         System.out.println(directionContainer.toString());
     }
 
+    /**
+     * internal Node class which implements comparable
+     */
     static class Node implements Comparable<Node> {
         int[][] currentState;
         int cost;
         int heuristic;
         Node parent;
 
+        /**
+         * constructor for node class
+         * 
+         * @param currentState current state of the node
+         * @param cost         current costs of the node
+         * @param heuristic    current heuristics of the node
+         * @param parent       current parent of the node
+         */
         public Node(int[][] currentState, int cost, int heuristic, Node parent) {
             this.currentState = currentState;
             this.cost = cost;
@@ -520,26 +596,56 @@ public class EightPuzzle {
             this.parent = parent;
         }
 
+        /**
+         * getter method for current state
+         * 
+         * @return returns current state variable
+         */
         public int[][] getCurrentState() {
             return this.currentState;
         }
 
+        /**
+         * getter method for cst
+         * 
+         * @return returns cost variable
+         */
         public int getCost() {
             return this.cost;
         }
 
+        /**
+         * getter method for heuristic value
+         * 
+         * @return returns heuristic value variable
+         */
         public int getHeuristic() {
             return this.heuristic;
         }
 
+        /**
+         * getter method for parent state
+         * 
+         * @return returns parent state variable
+         */
         public Node getParent() {
             return this.parent;
         }
 
+        /**
+         * setter method for heuristic value
+         * 
+         * @param inputVal inputs a value to update the heuristic
+         */
         public void setHeuristic(int inputVal) {
             this.heuristic = inputVal;
         }
 
+        /**
+         * implementation of compare To method to compare heuristics of two nodes
+         * 
+         * @param otherNode input of node to compare the two heuristics
+         */
         @Override
         public int compareTo(Node otherNode) {
             return Integer.compare(this.heuristic, otherNode.heuristic);

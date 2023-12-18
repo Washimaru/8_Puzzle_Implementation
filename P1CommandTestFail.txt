@@ -1,0 +1,16 @@
+maxNodeSearched 1000000
+
+randomizeState 1000
+printState
+searchAStar
+printState
+
+randomizeState 1000
+printState
+searchH2AStar
+printState
+
+randomizeState 1000
+printState
+localBeamSearch 4
+printState

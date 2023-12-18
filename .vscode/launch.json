@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/neverland/Documents/JoonhoSon_P1",
+      "program": "/Users/neverland/Documents/JoonhoSon_P1/build/Debug/outDebug"
+    }
+  ]
+}

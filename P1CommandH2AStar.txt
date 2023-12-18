@@ -1,0 +1,31 @@
+maxNodeSearched 100
+
+setState 102 345 678
+printState
+searchH2AStar
+printState
+
+setState 312 045 678
+printState
+searchH2AStar
+printState
+
+setState 312 645 078
+printState
+searchH2AStar
+printState
+
+setState 312 645 708
+printState
+searchH2AStar
+printState
+
+setState 312 605 748
+printState
+searchH2AStar
+printState
+
+setState 312 650 748
+printState
+searchH2AStar
+printState
